@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport Acquisition MOLDIAG - Version Éditable</title>
+    
+    <!-- 
+    ╔══════════════════════════════════════════════════════════════════════════════╗
+    ║  MOLDIAG - RAPPORT D'ACQUISITION ÉDITABLE                                    ║
+    ║  Version autonome avec sauvegarde automatique dans le navigateur             ║
+    ╠══════════════════════════════════════════════════════════════════════════════╣
+    ║  INSTRUCTIONS D'UTILISATION :                                                ║
+    ║  1. Cliquez sur n'importe quel texte pour le modifier                        ║
+    ║  2. Vos modifications sont surlignées en bleu clair au survol                ║
+    ║  3. Cliquez sur "💾 Sauvegarder" pour enregistrer vos modifications         ║
+    ║  4. Les modifications sont sauvegardées automatiquement toutes les 2 min     ║
+    ║  5. Utilisez "🔄 Restaurer" pour revenir à la version originale             ║
+    ║  6. "🖨️ Imprimer/PDF" exporte votre version modifiée                        ║
+    ║  7. "📥 Télécharger HTML" sauvegarde le fichier avec vos modifications      ║
+    ╠══════════════════════════════════════════════════════════════════════════════╣
+    ║  FONCTIONNALITÉS :                                                           ║
+    ║  ✅ Édition en ligne de tout le contenu                                      ║
+    ║  ✅ Sauvegarde dans le navigateur (localStorage)                             ║
+    ║  ✅ Chargement automatique au démarrage                                      ║
+    ║  ✅ Indicateur de modifications non sauvegardées                             ║
+    ║  ✅ Auto-sauvegarde toutes les 2 minutes                                     ║
+    ║  ✅ Export PDF et HTML avec modifications                                    ║
+    ║  ✅ Restauration version originale                                           ║
+    ╚══════════════════════════════════════════════════════════════════════════════╝
+    -->
+    
+    <style>
+        /* =============== STYLES ORIGINAUX =============== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
+        header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 50px 40px; text-align: center; }
+        header h1 { font-size: 3em; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.3em; opacity: 0.95; }
+        .confidential { background: #d32f2f; color: white; padding: 20px; text-align: center; font-weight: bold; font-size: 1.2em; letter-spacing: 2px; }
+        nav { background: #2a5298; padding: 0; position: sticky; top: 0; z-index: 999; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        nav ul { list-style: none; display: flex; flex-wrap: wrap; }
+        nav li { flex: 1; min-width: 150px; }
+        nav a { display: block; color: white; text-decoration: none; padding: 15px 20px; text-align: center; transition: all 0.3s; border-right: 1px solid rgba(255,255,255,0.1); }
+        nav a:hover { background: #1e3c72; transform: translateY(-2px); }
+        .content { padding: 40px; }
+        section { margin-bottom: 60px; padding: 30px; background: #fafafa; border-radius: 10px; border-left: 5px solid #2a5298; }
+        h2 { color: #1e3c72; font-size: 2.2em; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #2a5298; }
+        h3 { color: #2a5298; font-size: 1.8em; margin-top: 30px; margin-bottom: 20px; }
+        h4 { color: #1e3c72; font-size: 1.4em; margin-top: 25px; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        th { background: #1e3c72; color: white; padding: 15px; text-align: left; font-weight: 600; }
+        td { padding: 12px 15px; border-bottom: 1px solid #ddd; }
+        tr:hover { background: #f5f5f5; }
+        .badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
+        .badge-critique { background: #d32f2f; color: white; }
+        .badge-eleve { background: #f57c00; color: white; }
+        .badge-moyen { background: #fbc02d; color: #333; }
+        .badge-faible { background: #388e3c; color: white; }
+        .badge-p1 { background: #d32f2f; color: white; }
+        .badge-p2 { background: #f57c00; color: white; }
+        .badge-p3 { background: #fbc02d; color: #333; }
+        .highlight-box { background: #e3f2fd; border-left: 4px solid #2196f3; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .warning-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .danger-box { background: #ffebee; border-left: 4px solid #f44336; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .success-box { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .checkbox-item { padding: 12px; margin: 8px 0; background: white; border-left: 3px solid #2a5298; border-radius: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        ul, ol { margin-left: 30px; margin-top: 15px; margin-bottom: 15px; }
+        li { margin-bottom: 10px; }
+        .key-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+        .key-figure { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 10px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .key-figure .number { font-size: 2.5em; font-weight: bold; margin-bottom: 10px; }
+        .key-figure .label { font-size: 1.1em; opacity: 0.9; }
+        footer { background: #1e3c72; color: white; text-align: center; padding: 30px; margin-top: 50px; }
+        
+        /* =============== NOUVEAUX STYLES POUR ÉDITION =============== */
+        
+        /* Barre d'outils édition */
+        .edit-toolbar {
+            position: sticky;
+            top: 57px;
+            z-index: 1000;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            padding: 15px 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .edit-toolbar-left {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .edit-toolbar-right {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .edit-btn {
+            background: white;
+            color: #185a9d;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .edit-btn.save {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .edit-btn.restore {
+            background: #f57c00;
+            color: white;
+        }
+        
+        .edit-btn.download {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .edit-status {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            backdrop-filter: blur(10px);
+        }
+        
+        .edit-status.unsaved {
+            background: #ff9800;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Zones éditables */
+        [contenteditable="true"] {
+            outline: none;
+            transition: all 0.3s;
+            border-radius: 3px;
+            padding: 2px;
+        }
+        
+        [contenteditable="true"]:hover {
+            background: rgba(33, 150, 243, 0.1);
+            cursor: text;
+        }
+        
+        [contenteditable="true"]:focus {
+            background: rgba(33, 150, 243, 0.15);
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);
+        }
+        
+        /* Notification sauvegarde */
+        .save-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            display: none;
+        }
+        
+        .save-notification.show {
+            display: block;
+        }
+        
+        .save-notification.error {
+            background: #f44336;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Modal confirmation */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            animation: zoomIn 0.3s ease-out;
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .modal-content h3 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+        
+        .modal-content p {
+            margin-bottom: 25px;
+            color: #666;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        
+        .modal-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn.confirm {
+            background: #d32f2f;
+            color: white;
+        }
+        
+        .modal-btn.cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .modal-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Badge version */
+        .version-badge {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: rgba(30, 60, 114, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Print styles */
+        @media print {
+            .edit-toolbar, .version-badge, .save-notification, nav { display: none; }
+            section { page-break-inside: avoid; }
+            .container { box-shadow: none; }
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .content { padding: 20px; }
+            header h1 { font-size: 2em; }
+            nav ul { flex-direction: column; }
+            nav li { width: 100%; }
+            table { font-size: 0.85em; }
+            .edit-toolbar {
+                top: 0;
+                padding: 10px 15px;
+            }
+            .edit-toolbar-left, .edit-toolbar-right {
+                width: 100%;
+                justify-content: center;
+            }
+            .edit-btn {
+                padding: 10px 15px;
+                font-size: 0.85em;
+            }
+            .version-badge {
+                bottom: 80px;
+                right: 15px;
+                font-size: 0.75em;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Notification de sauvegarde -->
+    <div class="save-notification" id="saveNotification"></div>
+    
+    <!-- Modal de confirmation -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <h3>⚠️ Confirmer la restauration</h3>
+            <p>Êtes-vous sûr de vouloir restaurer la version originale ? Toutes vos modifications seront perdues.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">❌ Annuler</button>
+                <button class="modal-btn confirm" onclick="confirmRestore()">✅ Restaurer</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Badge version -->
+    <div class="version-badge" id="versionBadge">
+        📝 Version originale
+    </div>
+    
+    <div class="container">
+        
+        <!-- Barre d'outils d'édition -->
+        <div class="edit-toolbar">
+            <div class="edit-toolbar-left">
+                <button class="edit-btn save" onclick="saveCurrentVersion()" title="Sauvegarder les modifications">
+                    💾 Sauvegarder
+                </button>
+                <button class="edit-btn restore" onclick="showRestoreModal()" title="Restaurer la version originale">
+                    🔄 Restaurer Original
+                </button>
+                <button class="edit-btn download" onclick="downloadAsHTML()" title="Télécharger en HTML">
+                    📥 Télécharger HTML
+                </button>
+                <button class="edit-btn" onclick="window.print()" title="Imprimer ou sauvegarder en PDF">
+                    🖨️ Imprimer/PDF
+                </button>
+            </div>
+            <div class="edit-toolbar-right">
+                <div class="edit-status" id="editStatus">
+                    ✅ Tout sauvegardé
+                </div>
+            </div>
+        </div>
+        
+        <header>
+            <h1 contenteditable="true" class="editable">📊 RAPPORT D'ACQUISITION MOLDIAG</h1>
+            <div class="subtitle" contenteditable="true" class="editable">Analyse Stratégique et Due Diligence Acquéreur</div>
+            <div style="margin-top: 15px; font-size: 1em;" contenteditable="true" class="editable">🗓️ Novembre 2025</div>
+        </header>
+        
+        <div class="confidential" contenteditable="true" class="editable">🔒 DOCUMENT STRICTEMENT CONFIDENTIEL 🔒</div>
+        
+        <nav>
+            <ul>
+                <li><a href="#synthese">Synthèse Exécutive</a></li>
+                <li><a href="#transaction">Structure Transaction</a></li>
+                <li><a href="#business">Analyse Business</a></li>
+                <li><a href="#risques">Cartographie Risques</a></li>
+                <li><a href="#valorisation">Valorisation</a></li>
+                <li><a href="#recommandations">Recommandations</a></li>
+                <li><a href="#dataroom">Checklist Data-Room</a></li>
+            </ul>
+        </nav>
+        
+        <div class="content" id="editableContent">
+            
+            <!-- SYNTHÈSE EXÉCUTIVE -->
+            <section id="synthese">
+                <h2 contenteditable="true">1. 📋 SYNTHÈSE EXÉCUTIVE</h2>
+                
+                <div class="highlight-box">
+                    <h3 contenteditable="true">Vue d'ensemble de l'opportunité</h3>
+                    <p contenteditable="true"><strong>Moldiag SA</strong> est une société marocaine spécialisée dans le développement, la production et la commercialisation de kits de diagnostic moléculaire in vitro. L'entreprise se positionne comme le seul producteur local africain de tests PCR, avec un portefeuille de 6 kits autorisés et certifiés (COVID-19, HER2, HCV, Tuberculose, Leucémie, MPOX).</p>
+                    <p style="margin-top: 15px;" contenteditable="true"><strong>Transaction envisagée :</strong> Acquisition de la participation de MAScIR (actuellement 85% du capital) pour un montant de 1,1M MAD, structurée en deux phases selon le Term Sheet SeedBox.</p>
+                </div>
+                
+                <div class="key-figures">
+                    <div class="key-figure">
+                        <div class="number" contenteditable="true">1,1M MAD</div>
+                        <div class="label" contenteditable="true">Prix d'acquisition (85%)</div>
+                    </div>
+                    <div class="key-figure">
+                        <div class="number" contenteditable="true">6 kits</div>
+                        <div class="label" contenteditable="true">Produits autorisés DMP</div>
+                    </div>
+                    <div class="key-figure">
+                        <div class="number" contenteditable="true">+5M</div>
+                        <div class="label" contenteditable="true">Tests vendus</div>
+                    </div>
+                    <div class="key-figure">
+                        <div class="number" contenteditable="true">9 brevets</div>
+                        <div class="label" contenteditable="true">+ 2 en cours</div>
+                    </div>
+                </div>
+                
+                <h3 contenteditable="true">⚠️ Points de Vigilance Majeurs</h3>
+                
+                <div class="danger-box">
+                    <h4 contenteditable="true">🔴 RISQUES CRITIQUES IDENTIFIÉS</h4>
+                    <ol>
+                        <li contenteditable="true"><strong>Dépendance aux Chercheurs</strong> : Le savoir-faire technique repose sur 2 chercheurs clés (Hicham El Hadi et Abdeladim Moumen). Leur départ rendrait la R&D et la production pratiquement impossibles.</li>
+                        <li contenteditable="true"><strong>Propriété Intellectuelle Incertaine</strong> : Les brevets sont actuellement détenus par MAScIR. Le transfert à Moldiag n'est pas garanti et pourrait être contesté. Risque de perte totale de la PI.</li>
+                        <li contenteditable="true"><strong>Actifs de Production Non Possédés</strong> : Les équipements de production (estimés à 20-30M MAD) appartiennent à MAScIR. Sans contrat de mise à disposition sécurisé, Moldiag ne peut pas produire.</li>
+                        <li contenteditable="true"><strong>Situation Financière Opaque</strong> : Absence de comptes audités, de budget détaillé, et de projections crédibles. Impossible d'évaluer la viabilité économique réelle.</li>
+                        <li contenteditable="true"><strong>Valorisation Excessive</strong> : Prix proposé (1,1M MAD) ne reflète pas les risques ni la réalité économique. Valeur réelle probablement négative ou proche de zéro sans les actifs critiques.</li>
+                        <li contenteditable="true"><strong>Pipeline R&D Hypothétique</strong> : 13 kits en développement annoncés mais sans timeline, budget, ni ressources identifiées. Risque de surpromesse sans livraison.</li>
+                    </ol>
+                </div>
+                
+                <h3 contenteditable="true">📊 Recommandation Globale</h3>
+                
+                <div class="warning-box" style="border-left: 4px solid #d32f2f;">
+                    <p style="font-size: 1.3em; font-weight: bold; color: #d32f2f; text-align: center;" contenteditable="true">
+                        ⚠️ GO CONDITIONNEL STRICT ⚠️
+                    </p>
+                    <p style="margin-top: 15px;" contenteditable="true">
+                        <strong>L'acquisition peut être poursuivie UNIQUEMENT SI les 6 conditions impératives ci-dessous sont satisfaites.</strong>
+                        En l'état actuel, les informations disponibles sont insuffisantes pour valider l'opération.
+                    </p>
+                </div>
+            </section>
+            
+            <!-- STRUCTURE DE LA TRANSACTION -->
+            <section id="transaction">
+                <h2 contenteditable="true">2. 🏗️ STRUCTURE DE LA TRANSACTION</h2>
+                
+                <h3 contenteditable="true">Modalités Prévues (selon Term Sheet)</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Paramètre</th>
+                            <th>Détails</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true"><strong>Cible</strong></td>
+                            <td contenteditable="true">Moldiag SA - Capital social : 1,4M MAD (14 000 actions à 100 MAD nominal)</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Vendeur</strong></td>
+                            <td contenteditable="true">MAScIR (actuellement 85% du capital = 11 897 actions)</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Acheteur</strong></td>
+                            <td contenteditable="true">SeedBox (filiale d'INNOV X)</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Prix Total</strong></td>
+                            <td contenteditable="true">1 100 000 MAD pour 85% du capital (valorisation post-money : 1,3M MAD)</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Prix par Action</strong></td>
+                            <td contenteditable="true">~92,5 MAD/action (légère décote vs. nominal 100 MAD)</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Structure</strong></td>
+                            <td contenteditable="true">Acquisition en 2 étapes</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 contenteditable="true">Calendrier d'Acquisition</h3>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">🔹 PHASE 1 - Première Acquisition (43%)</h4>
+                    <ul>
+                        <li contenteditable="true"><strong>Nombre d'actions :</strong> 6 020 actions</li>
+                        <li contenteditable="true"><strong>% capital acquis :</strong> 43%</li>
+                        <li contenteditable="true"><strong>Prix payé :</strong> 556 471 MAD (50,5% du prix total)</li>
+                        <li contenteditable="true"><strong>Timing :</strong> À définir après levée des conditions suspensives</li>
+                        <li contenteditable="true"><strong>Gouvernance :</strong> SeedBox nomme 2 administrateurs / 5 (minoritaire au CA)</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">🔹 PHASE 2 - Seconde Acquisition (42%)</h4>
+                    <ul>
+                        <li contenteditable="true"><strong>Nombre d'actions :</strong> 5 877 actions</li>
+                        <li contenteditable="true"><strong>% capital acquis :</strong> 42% (cumul : 85%)</li>
+                        <li contenteditable="true"><strong>Prix payé :</strong> 543 529 MAD (49,5% du prix total)</li>
+                        <li contenteditable="true"><strong>Timing :</strong> Au plus tard 30 juin 2027 (sous condition EBITDA 20% en 2026)<br>
+                            Si non atteint : report 30 juin 2028 (condition EBITDA 20% en 2027)<br>
+                            Si toujours non atteint : acquisition obligatoire avant 31 décembre 2028</li>
+                        <li contenteditable="true"><strong>Gouvernance post-Phase 2 :</strong> SeedBox prend le contrôle total du CA</li>
+                    </ul>
+                </div>
+                
+                <h3 contenteditable="true">⚠️ Analyse Critique de la Structure</h3>
+                
+                <div class="danger-box">
+                    <h4 contenteditable="true">🔴 PROBLÈMES IDENTIFIÉS</h4>
+                    
+                    <h4 contenteditable="true">1. Risque de Minorité Bloquante (Phase 1)</h4>
+                    <p contenteditable="true">
+                        Pendant 2-5 ans, SeedBox ne détiendra que 43% du capital et sera minoritaire au CA (2 admins / 5). 
+                        MAScIR conserve un pouvoir de blocage sur les décisions stratégiques, alors que SeedBox aura déjà investi 556K MAD.
+                    </p>
+                    <p contenteditable="true"><strong>Conséquence :</strong> Impossibilité de piloter l'entreprise durant la phase critique de développement commercial.</p>
+                    
+                    <h4 contenteditable="true">2. Earn-out Basé sur l'EBITDA</h4>
+                    <p contenteditable="true">
+                        La Phase 2 est conditionnée à l'atteinte d'une marge EBITDA de 20% (2026 ou 2027). 
+                        Or, Moldiag n'a jamais publié de comptes audités ni démontré de rentabilité opérationnelle.
+                    </p>
+                    <p contenteditable="true"><strong>Risque :</strong> Le seuil de 20% est probablement irréaliste dans le contexte actuel (absence de scalabilité prouvée, coûts de structure élevés).</p>
+                    
+                    <h4 contenteditable="true">3. Acquisition Forcée (2028)</h4>
+                    <p contenteditable="true">
+                        Même en cas d'échec complet (EBITDA négatif), SeedBox est obligé d'acquérir les 42% restants au prix fixe de 543K MAD avant fin 2028.
+                    </p>
+                    <p contenteditable="true"><strong>Conséquence :</strong> SeedBox s'expose à un "bad money after good" si Moldiag ne décolle pas.</p>
+                    
+                    <h4 contenteditable="true">4. Prix Fixe Sans Ajustement</h4>
+                    <p contenteditable="true">
+                        Le prix est fixé à 1,1M MAD sans mécanisme d'ajustement en fonction de la performance réelle, du chiffre d'affaires, ou du working capital.
+                    </p>
+                    <p contenteditable="true"><strong>Problème :</strong> Si Moldiag perd de la valeur (clients perdus, Chercheurs partis, réglementations expirées), SeedBox paie quand même le prix plein.</p>
+                </div>
+                
+                <h3 contenteditable="true">✅ Structure Alternative Recommandée</h3>
+                
+                <div class="success-box">
+                    <h4 contenteditable="true">PROPOSITION SEEDBOX</h4>
+                    <ol>
+                        <li contenteditable="true"><strong>Acquisition immédiate de 51% minimum</strong> pour contrôler la gouvernance dès le début</li>
+                        <li contenteditable="true"><strong>Earn-out conditionnel</strong> pour les 34% restants basé sur :
+                            <ul>
+                                <li contenteditable="true">Atteinte de chiffre d'affaires cible (ex: 5M MAD/an en 2026)</li>
+                                <li contenteditable="true">Maintien des Chercheurs clés (bonus de rétention)</li>
+                                <li contenteditable="true">Transfert effectif de la PI et des actifs</li>
+                            </ul>
+                        </li>
+                        <li contenteditable="true"><strong>Prix ajustable</strong> en fonction du working capital et de l'endettement réel à la date de closing</li>
+                        <li contenteditable="true"><strong>Sortie optionnelle</strong> si conditions non remplies dans les 18 mois (remboursement partiel)</li>
+                    </ol>
+                </div>
+            </section>
+            
+            <!-- ANALYSE BUSINESS -->
+            <section id="business">
+                <h2 contenteditable="true">3. 💼 ANALYSE BUSINESS & MARCHÉ</h2>
+                
+                <h3 contenteditable="true">Modèle d'Affaires</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Composante</th>
+                            <th>Description</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true"><strong>Proposition de valeur</strong></td>
+                            <td contenteditable="true">Kits de diagnostic moléculaire "Made in Morocco" à prix compétitif vs. imports</td>
+                            <td contenteditable="true"><span class="badge badge-faible">Validée</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Clients cibles</strong></td>
+                            <td contenteditable="true">Laboratoires d'analyses médicales publics et privés (Maroc + export Afrique)</td>
+                            <td contenteditable="true"><span class="badge badge-faible">Validée</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Canaux distribution</strong></td>
+                            <td contenteditable="true">Distribution directe + Distributeurs locaux + Appels d'offres publics</td>
+                            <td contenteditable="true"><span class="badge badge-moyen">Partielle</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Sources de revenus</strong></td>
+                            <td contenteditable="true">Vente kits (one-shot) + Contrats cadres (volumes)</td>
+                            <td contenteditable="true"><span class="badge badge-faible">Validée</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Scalabilité</strong></td>
+                            <td contenteditable="true">Production actuelle : capacité ~500K tests/an (théorique)</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Inconnue</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Barrières à l'entrée</strong></td>
+                            <td contenteditable="true">Autorisations DMP + Certifications ISO + Brevets + Know-how technique</td>
+                            <td contenteditable="true"><span class="badge badge-faible">Forte</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 contenteditable="true">Portfolio Produits Commercialisés</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Indication</th>
+                            <th>Autorisation DMP</th>
+                            <th>Marquage CE</th>
+                            <th>Prix Estimé</th>
+                            <th>Statut Commercial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true"><strong>COVID-19 PCR</strong></td>
+                            <td contenteditable="true">Détection SARS-CoV-2</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">~30 MAD/test</td>
+                            <td contenteditable="true"><span class="badge badge-moyen">Déclin</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>HER2 (Cancer sein)</strong></td>
+                            <td contenteditable="true">Surexpression HER2</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">~1200 MAD/test</td>
+                            <td contenteditable="true"><span class="badge badge-faible">Actif</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>HCV (Hépatite C)</strong></td>
+                            <td contenteditable="true">Charge virale VHC</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">~300 MAD/test</td>
+                            <td contenteditable="true"><span class="badge badge-faible">Actif</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Tuberculose LAMP</strong></td>
+                            <td contenteditable="true">Détection rapide TB</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">~120 MAD/test</td>
+                            <td contenteditable="true"><span class="badge badge-moyen">Lancement</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>LMC (Leucémie)</strong></td>
+                            <td contenteditable="true">Suivi mutation BCR-ABL</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">~800 MAD/test</td>
+                            <td contenteditable="true"><span class="badge badge-moyen">Niche</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>MPOX</strong></td>
+                            <td contenteditable="true">Détection Monkeypox</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">✅ Oui</td>
+                            <td contenteditable="true">~50 MAD/test</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Opportuniste</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 contenteditable="true">Pipeline R&D (13 kits en développement)</h3>
+                
+                <div class="warning-box">
+                    <h4 contenteditable="true">⚠️ PIPELINE NON DOCUMENTÉ</h4>
+                    <p contenteditable="true">Le Term Sheet et la présentation mentionnent 13 kits en développement, mais <strong>aucune information détaillée n'est disponible</strong> concernant :</p>
+                    <ul>
+                        <li contenteditable="true">État d'avancement réel (% completion)</li>
+                        <li contenteditable="true">Budget consommé vs. budget total par projet</li>
+                        <li contenteditable="true">Timeline de validation clinique et d'autorisation DMP</li>
+                        <li contenteditable="true">Ressources humaines assignées (chercheurs, techniciens)</li>
+                        <li contenteditable="true">Risques techniques et réglementaires</li>
+                    </ul>
+                    <p contenteditable="true"><strong>Recommandation :</strong> Demander un tableau détaillé de la pipeline R&D dans la Data-Room.</p>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Catégorie</th>
+                            <th>Produits Annoncés</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true"><strong>Santé Humaine (PCR)</strong></td>
+                            <td contenteditable="true">Hépatite B, HPV, Multiplex HBV/HCV/HIV, Cancer prostate, HIV, Helicobacter pylori, Méningite</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Non documenté</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Tests Rapides</strong></td>
+                            <td contenteditable="true">COVID-19 Ag, MPOX Ag, HIV Ag, Helicobacter pylori Ag, Méningite Ag, HCV Ag</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Non documenté</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Santé Vétérinaire</strong></td>
+                            <td contenteditable="true">Salmonelle</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Non documenté</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Phytosanitaire</strong></td>
+                            <td contenteditable="true">ToBRFV (virus tomate)</td>
+                            <td contenteditable="true"><span class="badge badge-moyen">Convention ONSSA</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 contenteditable="true">Analyse de Marché</h3>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">Marché Marocain (estimations Moldiag)</h4>
+                    <ul>
+                        <li contenteditable="true"><strong>Taille totale :</strong> ~300M USD (diagnostic moléculaire)</li>
+                        <li contenteditable="true"><strong>Part accessible :</strong> ~120M MAD (kits autorisés Moldiag)</li>
+                        <li contenteditable="true"><strong>Concurrence :</strong> Majoritairement imports (Roche, Abbott, Qiagen, etc.)</li>
+                        <li contenteditable="true"><strong>Avantage Moldiag :</strong> Prix -30 à -50% vs. imports + Made in Morocco</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">Marché Export Afrique</h4>
+                    <ul>
+                        <li contenteditable="true"><strong>Potentiel :</strong> Très élevé (besoin critique en diagnostics accessibles)</li>
+                        <li contenteditable="true"><strong>Barrières :</strong> Autorisations locales, logistique, concurrence chinoise low-cost</li>
+                        <li contenteditable="true"><strong>Partenariats :</strong> Convention Institut Pasteur Maroc évoquée (non signée)</li>
+                    </ul>
+                </div>
+                
+                <h3 contenteditable="true">🎯 Forces & Faiblesses du Modèle</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Forces</th>
+                            <th>Faiblesses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true">
+                                ✅ Seul producteur local africain de kits PCR<br>
+                                ✅ Portefeuille 6 kits autorisés + certifiés<br>
+                                ✅ Prix compétitifs vs. imports<br>
+                                ✅ Barrières réglementaires élevées<br>
+                                ✅ Soutien écosystème UM6P/MAScIR<br>
+                                ✅ Pipeline R&D riche (si validé)
+                            </td>
+                            <td contenteditable="true">
+                                ❌ Dépendance totale aux 2 Chercheurs<br>
+                                ❌ Scalabilité non prouvée<br>
+                                ❌ Rentabilité inconnue (pas de comptes)<br>
+                                ❌ Propriété IP et actifs incertaine<br>
+                                ❌ Concentration clients forte (publics)<br>
+                                ❌ Marché COVID en déclin<br>
+                                ❌ Pipeline non documenté
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- CARTOGRAPHIE DES RISQUES -->
+            <section id="risques">
+                <h2 contenteditable="true">4. 🚨 CARTOGRAPHIE DES RISQUES</h2>
+                
+                <h3 contenteditable="true">Matrice de Criticité</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risque</th>
+                            <th>Impact</th>
+                            <th>Probabilité</th>
+                            <th>Criticité</th>
+                            <th>Mesures d'Atténuation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true"><strong>Départ Chercheurs</strong></td>
+                            <td contenteditable="true">Très Élevé</td>
+                            <td contenteditable="true">Moyenne</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Critique</span></td>
+                            <td contenteditable="true">Packages rétention 5-10 ans + Clauses golden handcuffs + Documentation know-how</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Non-transfert PI</strong></td>
+                            <td contenteditable="true">Très Élevé</td>
+                            <td contenteditable="true">Élevée</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Critique</span></td>
+                            <td contenteditable="true">Audit IP complet + Contrat licence exclusive irrévocable + Garanties MAScIR</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Perte actifs production</strong></td>
+                            <td contenteditable="true">Très Élevé</td>
+                            <td contenteditable="true">Moyenne</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Critique</span></td>
+                            <td contenteditable="true">Bail emphytéotique 15 ans + Option d'achat + Inventaire valorisé + Capex reprise</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Comptes frauduleux</strong></td>
+                            <td contenteditable="true">Élevé</td>
+                            <td contenteditable="true">Moyenne</td>
+                            <td contenteditable="true"><span class="badge badge-eleve">Élevée</span></td>
+                            <td contenteditable="true">Audit Big 4 + Due diligence financière exhaustive + Garanties MAScIR</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Défaut autorisation DMP</strong></td>
+                            <td contenteditable="true">Élevé</td>
+                            <td contenteditable="true">Faible</td>
+                            <td contenteditable="true"><span class="badge badge-eleve">Élevée</span></td>
+                            <td contenteditable="true">Audit réglementaire + Mise à jour dossiers + Garanties conformité</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Marché COVID effondré</strong></td>
+                            <td contenteditable="true">Moyen</td>
+                            <td contenteditable="true">Élevée</td>
+                            <td contenteditable="true"><span class="badge badge-eleve">Élevée</span></td>
+                            <td contenteditable="true">Diversification portfolio + Focus kits structurels (HER2, HCV, TB)</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Pipeline non viable</strong></td>
+                            <td contenteditable="true">Moyen</td>
+                            <td contenteditable="true">Élevée</td>
+                            <td contenteditable="true"><span class="badge badge-eleve">Élevée</span></td>
+                            <td contenteditable="true">Audit technique R&D + Priorisation 3-5 kits max + Budget dédié</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Défaut scalabilité</strong></td>
+                            <td contenteditable="true">Moyen</td>
+                            <td contenteditable="true">Moyenne</td>
+                            <td contenteditable="true"><span class="badge badge-moyen">Moyenne</span></td>
+                            <td contenteditable="true">Audit industriel + Plan capex + Recrutement production</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Litiges RH</strong></td>
+                            <td contenteditable="true">Faible</td>
+                            <td contenteditable="true">Moyenne</td>
+                            <td contenteditable="true"><span class="badge badge-moyen">Moyenne</span></td>
+                            <td contenteditable="true">Audit social + Régularisation CNSS + Clauses garantie</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Concurrence export</strong></td>
+                            <td contenteditable="true">Faible</td>
+                            <td contenteditable="true">Élevée</td>
+                            <td contenteditable="true"><span class="badge badge-moyen">Moyenne</span></td>
+                            <td contenteditable="true">Préqualification OMS + Partenariats distributeurs + Prix agressifs</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 contenteditable="true">🔴 Risques DEAL-BREAKERS (Conditions Impératives)</h3>
+                
+                <div class="danger-box">
+                    <ol>
+                        <li contenteditable="true">
+                            <h4 contenteditable="true">Rétention Chercheurs (Hicham El Hadi & Abdeladim Moumen)</h4>
+                            <p contenteditable="true"><strong>Condition :</strong> Contrats d'engagement irrévocables 5 ans minimum avec clauses de non-concurrence renforcées + Packages rétention (stock-options, earn-out, salaire market premium).</p>
+                            <p contenteditable="true"><strong>Conséquence si non remplie :</strong> Abandon de la transaction (pas de savoir-faire = pas de valeur).</p>
+                        </li>
+                        
+                        <li contenteditable="true">
+                            <h4 contenteditable="true">Transfert Complet de la Propriété Intellectuelle</h4>
+                            <p contenteditable="true"><strong>Condition :</strong> Cession irrévocable de tous les brevets, marques, et know-how de MAScIR à Moldiag, avec garanties d'antériorité et absence de contentieux IP.</p>
+                            <p contenteditable="true"><strong>Validation :</strong> Audit IP par cabinet spécialisé (ex: Casablanca IP).</p>
+                            <p contenteditable="true"><strong>Conséquence si non remplie :</strong> Renégociation drastique du prix (division par 2-3) ou abandon.</p>
+                        </li>
+                        
+                        <li contenteditable="true">
+                            <h4 contenteditable="true">Sécurisation des Actifs de Production</h4>
+                            <p contenteditable="true"><strong>Condition :</strong> Contrat de mise à disposition longue durée (15 ans min.) OU transfert de propriété des équipements critiques (valorisation ~20-30M MAD) avec option d'achat préférentielle.</p>
+                            <p contenteditable="true"><strong>Validation :</strong> Inventaire exhaustif + Évaluation par expert indépendant.</p>
+                            <p contenteditable="true"><strong>Conséquence si non remplie :</strong> Impossible de produire → abandon transaction.</p>
+                        </li>
+                        
+                        <li contenteditable="true">
+                            <h4 contenteditable="true">Comptes Audités par Big 4</h4>
+                            <p contenteditable="true"><strong>Condition :</strong> Audit financier complet des 3 dernières années + Validation EBITDA réel + Situation dettes (CC associés, fournisseurs, fiscales, sociales).</p>
+                            <p contenteditable="true"><strong>Validation :</strong> Rapport audit Big 4 (Deloitte, PwC, KPMG, EY).</p>
+                            <p contenteditable="true"><strong>Conséquence si non remplie :</strong> Prix max 500K MAD (au lieu de 1,1M MAD) ou abandon.</p>
+                        </li>
+                        
+                        <li contenteditable="true">
+                            <h4 contenteditable="true">Conformité Réglementaire Totale</h4>
+                            <p contenteditable="true"><strong>Condition :</strong> Validation ISO 13485 à jour + Autorisations DMP valides 6 kits + Absence de non-conformités critiques + Marquage CE effectif.</p>
+                            <p contenteditable="true"><strong>Validation :</strong> Audit réglementaire + Visite DMP + Copie certifications à jour.</p>
+                            <p contenteditable="true"><strong>Conséquence si non remplie :</strong> Suspension transaction jusqu'à mise en conformité (max 6 mois) ou abandon.</p>
+                        </li>
+                        
+                        <li contenteditable="true">
+                            <h4 contenteditable="true">Business Plan Crédible</h4>
+                            <p contenteditable="true"><strong>Condition :</strong> BP Excel détaillé (3-5 ans) avec hypothèses réalistes + Projections CA par produit + Analyse break-even + Chemin vers EBITDA 20%.</p>
+                            <p contenteditable="true"><strong>Validation :</strong> Revue par équipe finance SeedBox + Stress-tests scénarios (best/base/worst case).</p>
+                            <p contenteditable="true"><strong>Conséquence si non remplie :</strong> Renégociation structure earn-out ou abandon.</p>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+            
+            <!-- VALORISATION -->
+            <section id="valorisation">
+                <h2 contenteditable="true">5. 💰 ANALYSE DE VALORISATION</h2>
+                
+                <h3 contenteditable="true">Prix Proposé vs. Benchmarks</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Paramètre</th>
+                            <th>Term Sheet Moldiag</th>
+                            <th>Benchmark Startups BioTech</th>
+                            <th>Écart</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true"><strong>Valorisation (85% capital)</strong></td>
+                            <td contenteditable="true">1,1M MAD (~110K USD)</td>
+                            <td contenteditable="true">1-3M USD (Phase Commerciale)</td>
+                            <td contenteditable="true"><span class="badge badge-faible">Décote x10-30</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Valorisation post-money</strong></td>
+                            <td contenteditable="true">1,3M MAD (~130K USD)</td>
+                            <td contenteditable="true">-</td>
+                            <td contenteditable="true">-</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Multiple CA (si CA = 2M MAD/an)</strong></td>
+                            <td contenteditable="true">0,65x</td>
+                            <td contenteditable="true">2-5x (BioTech rentable)</td>
+                            <td contenteditable="true"><span class="badge badge-faible">Décote x3-8</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Multiple EBITDA (si EBITDA = 0)</strong></td>
+                            <td contenteditable="true">N/A</td>
+                            <td contenteditable="true">8-15x (rentable)</td>
+                            <td contenteditable="true">-</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><strong>Valeur PI (9 brevets)</strong></td>
+                            <td contenteditable="true">Non valorisée séparément</td>
+                            <td contenteditable="true">500K - 2M USD</td>
+                            <td contenteditable="true"><span class="badge badge-critique">Incertaine</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 contenteditable="true">⚠️ Points d'Alerte sur la Valorisation</h3>
+                
+                <div class="danger-box">
+                    <h4 contenteditable="true">1. Absence de Justification du Prix</h4>
+                    <p contenteditable="true">Le Term Sheet fixe le prix à 1,1M MAD sans aucune documentation de valorisation (DCF, comparables, patrimoniale).</p>
+                    
+                    <h4 contenteditable="true">2. Prix Supérieur au Capital Social</h4>
+                    <p contenteditable="true">Capital social Moldiag = 1,4M MAD → Prix 85% = 1,1M MAD → Prime d'émission négative (-21% de décote sur nominal).</p>
+                    <p contenteditable="true">Cette "décote" est largement insuffisante compte tenu des risques identifiés.</p>
+                    
+                    <h4 contenteditable="true">3. Valeur Réelle Probablement Négative</h4>
+                    <p contenteditable="true">Si on retire la valeur des actifs non possédés (équipements ~25M MAD) et de la PI incertaine (brevets ~5M MAD), la valeur résiduelle de Moldiag est :</p>
+                    <ul>
+                        <li contenteditable="true">Autorisations DMP : ~500K MAD</li>
+                        <li contenteditable="true">Stock + Créances clients : ~500K MAD</li>
+                        <li contenteditable="true">Goodwill (savoir-faire Chercheurs) : ~1M MAD</li>
+                        <li contenteditable="true"><strong>TOTAL : ~2M MAD (valeur entreprise)</strong></li>
+                        <li contenteditable="true">Moins dettes estimées : ~1M MAD</li>
+                        <li contenteditable="true"><strong>VALEUR NETTE : ~1M MAD</strong></li>
+                    </ul>
+                    <p contenteditable="true">Donc 85% = 850K MAD → <strong>Surpayement de 250K MAD (29%)</strong></p>
+                </div>
+                
+                <h3 contenteditable="true">✅ Fourchette de Prix Recommandée</h3>
+                
+                <div class="success-box">
+                    <h4 contenteditable="true">PROPOSITION SEEDBOX</h4>
+                    
+                    <h4 contenteditable="true">Scénario 1 : Acquisition Intégrale Immédiate (85%)</h4>
+                    <p contenteditable="true"><strong>Prix max : 600-700K MAD</strong> (au lieu de 1,1M MAD)</p>
+                    <ul>
+                        <li contenteditable="true">Décote 35-45% pour compenser les risques PI/actifs/Chercheurs</li>
+                        <li contenteditable="true">Conditions : Transfert PI + Contrat actifs + Rétention Chercheurs validés AVANT closing</li>
+                    </ul>
+                    
+                    <h4 contenteditable="true">Scénario 2 : Acquisition Progressive avec Earn-out</h4>
+                    <ul>
+                        <li contenteditable="true"><strong>Phase 1 (51% immédiat) :</strong> 400K MAD</li>
+                        <li contenteditable="true"><strong>Phase 2 (34% earn-out 2-3 ans) :</strong> 300-500K MAD conditionnés à :
+                            <ul>
+                                <li contenteditable="true">CA ≥ 5M MAD/an</li>
+                                <li contenteditable="true">EBITDA ≥ 15%</li>
+                                <li contenteditable="true">Maintien Chercheurs</li>
+                            </ul>
+                        </li>
+                        <li contenteditable="true"><strong>TOTAL : 700-900K MAD</strong> (vs. 1,1M MAD proposé)</li>
+                    </ul>
+                    
+                    <h4 contenteditable="true">Scénario 3 : Acquisition Minimale + Option de Sortie</h4>
+                    <ul>
+                        <li contenteditable="true"><strong>Phase 1 (43%) :</strong> 350K MAD</li>
+                        <li contenteditable="true"><strong>Option de sortie à 18 mois</strong> si conditions non remplies : remboursement 250K MAD par MAScIR</li>
+                        <li contenteditable="true"><strong>Phase 2 conditionnelle (42%) :</strong> 350K MAD si KPIs atteints</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- RECOMMANDATIONS -->
+            <section id="recommandations">
+                <h2 contenteditable="true">6. 🎯 RECOMMANDATIONS STRATÉGIQUES</h2>
+                
+                <h3 contenteditable="true">Plan d'Action Immédiat (J+0 à J+30)</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Responsable</th>
+                            <th>Deadline</th>
+                            <th>Criticité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true">Demande Data-Room complète (P1)</td>
+                            <td contenteditable="true">SeedBox Legal</td>
+                            <td contenteditable="true">J+7</td>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true">Nomination cabinet audit financier (Big 4)</td>
+                            <td contenteditable="true">SeedBox Finance</td>
+                            <td contenteditable="true">J+10</td>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true">Nomination cabinet audit IP</td>
+                            <td contenteditable="true">SeedBox Legal</td>
+                            <td contenteditable="true">J+10</td>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true">Rencontre Chercheurs (discussion packages rétention)</td>
+                            <td contenteditable="true">SeedBox DG + RH</td>
+                            <td contenteditable="true">J+15</td>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true">Visite site production + Inventaire actifs</td>
+                            <td contenteditable="true">SeedBox Ops</td>
+                            <td contenteditable="true">J+20</td>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true">Revue Business Plan + Modèle financier</td>
+                            <td contenteditable="true">SeedBox Finance</td>
+                            <td contenteditable="true">J+30</td>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 contenteditable="true">Feuille de Route Négociation (M1 - M6)</h3>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">MOIS 1 : Due Diligence Approfondie</h4>
+                    <ul>
+                        <li contenteditable="true">Réception Data-Room P1 complète</li>
+                        <li contenteditable="true">Lancement audits financier, juridique, IP, réglementaire</li>
+                        <li contenteditable="true">Rencontres Chercheurs + Management</li>
+                        <li contenteditable="true">Visite production + Laboratoires</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">MOIS 2 : Analyse & Synthèse</h4>
+                    <ul>
+                        <li contenteditable="true">Réception rapports audits</li>
+                        <li contenteditable="true">Identification Deal-Breakers</li>
+                        <li contenteditable="true">Valorisation indépendante</li>
+                        <li contenteditable="true">Décision GO / NO-GO définitive</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">MOIS 3 : Renégociation</h4>
+                    <ul>
+                        <li contenteditable="true">Proposition structure alternative (51% immédiat + earn-out)</li>
+                        <li contenteditable="true">Négociation prix (target : 600-700K MAD max)</li>
+                        <li contenteditable="true">Négociation packages Chercheurs</li>
+                        <li contenteditable="true">Rédaction contrats (SPA, Pacte, IP, Actifs)</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">MOIS 4-5 : Levée Conditions Suspensives</h4>
+                    <ul>
+                        <li contenteditable="true">Signature contrat licence PI exclusive</li>
+                        <li contenteditable="true">Signature contrat mise à dispo actifs (15 ans)</li>
+                        <li contenteditable="true">Signature contrats Chercheurs (5 ans + golden handcuffs)</li>
+                        <li contenteditable="true">Régularisation conformité réglementaire si nécessaire</li>
+                        <li contenteditable="true">Obtention autorisations gouvernementales</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4 contenteditable="true">MOIS 6 : Closing</h4>
+                    <ul>
+                        <li contenteditable="true">Signature définitive SPA + Pacte Actionnaires</li>
+                        <li contenteditable="true">Transfert titres + Paiement Phase 1</li>
+                        <li contenteditable="true">Installation gouvernance (CA SeedBox majoritaire)</li>
+                        <li contenteditable="true">Lancement plan 100 jours post-acquisition</li>
+                    </ul>
+                </div>
+                
+                <h3 contenteditable="true">Plan 100 Jours Post-Acquisition</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Priorité</th>
+                            <th>Actions</th>
+                            <th>Objectifs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                            <td contenteditable="true">
+                                <strong>Sécurisation Chercheurs</strong><br>
+                                - Signature packages rétention définitifs<br>
+                                - Mise en place KPIs individuels<br>
+                                - Plan formation équipe backup
+                            </td>
+                            <td contenteditable="true">Éliminer risque de départ</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                            <td contenteditable="true">
+                                <strong>Structuration Finance</strong><br>
+                                - Mise en place comptabilité analytique<br>
+                                - Tableaux de bord mensuel<br>
+                                - Business Plan actualisé
+                            </td>
+                            <td contenteditable="true">Visibilité financière totale</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><span class="badge badge-p1">P1</span></td>
+                            <td contenteditable="true">
+                                <strong>Priorisation R&D</strong><br>
+                                - Audit pipeline 13 kits<br>
+                                - Sélection 3-5 kits prioritaires<br>
+                                - Arrêt projets non viables
+                            </td>
+                            <td contenteditable="true">Focus ressources sur winners</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><span class="badge badge-p2">P2</span></td>
+                            <td contenteditable="true">
+                                <strong>Commercial Scale-up</strong><br>
+                                - Recrutement 2 commerciaux seniors<br>
+                                - CRM + Forecast pipeline<br>
+                                - Prospection export (Afrique)
+                            </td>
+                            <td contenteditable="true">CA +50% an 1</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><span class="badge badge-p2">P2</span></td>
+                            <td contenteditable="true">
+                                <strong>Production Scale-up</strong><br>
+                                - Analyse capacité réelle<br>
+                                - Plan investissement équipements<br>
+                                - SOPs production documentées
+                            </td>
+                            <td contenteditable="true">Capacité x2 à M+24</td>
+                        </tr>
+                        <tr>
+                            <td contenteditable="true"><span class="badge badge-p3">P3</span></td>
+                            <td contenteditable="true">
+                                <strong>Préqualification OMS</strong><br>
+                                - Dossiers TB + HCV<br>
+                                - Audit White Paper OMS<br>
+                                - Timeline 18-24 mois
+                            </td>
+                            <td contenteditable="true">Débloquer marchés export institutionnels</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- CHECKLIST DATA-ROOM -->
+            <section id="dataroom">
+                <h2 contenteditable="true">7. 📂 CHECKLIST DATA-ROOM COMPLÈTE</h2>
+                
+                <div class="warning-box">
+                    <h4 contenteditable="true">⚠️ DOCUMENTS MANQUANTS CRITIQUES</h4>
+                    <p contenteditable="true">La Data-Room actuelle est <strong>largement incomplète</strong>. Les documents ci-dessous sont <strong>INDISPENSABLES</strong> pour valider la transaction.</p>
+                    <p contenteditable="true">Délai demandé : <strong>7 jours ouvrés</strong> pour les documents P1.</p>
+                </div>
+                
+                <h3 contenteditable="true">1. GOUVERNANCE & STRUCTURE</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Statuts à jour + Registre commerce + K-Bis</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">PV AGE/AGO 3 dernières années</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Pacte actionnaires actuel (si existant)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Tableau capitalisation détaillé (tous actionnaires + historique)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p2">P2</span> <span contenteditable="true">Organigramme groupe MAScIR/UM6P</span></div>
+                
+                <h3 contenteditable="true">2. PROPRIÉTÉ INTELLECTUELLE</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Liste EXHAUSTIVE brevets (9 en vigueur + 2 en cours)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Certificats OMPIC + Date dépôt + Date expiration + Statut juridique</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Contrats licence actuels (MAScIR → Moldiag)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Projet contrat licence exclusive post-acquisition</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Liste marques déposées + Certificats OMPIC</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Attestation absence litiges IP</span></div>
+                <div class="checkbox-item"><span class="badge badge-p2">P2</span> <span contenteditable="true">Documentation technique : protocoles, formulations, SOPs</span></div>
+                
+                <h3 contenteditable="true">3. FINANCIER</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Bilans + Comptes de résultat 3 dernières années (2022-2023-2024)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Annexes comptables détaillées</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Liasses fiscales 3 ans</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Tableau flux trésorerie réel 3 ans + Projection 2 ans</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Compte résultat analytique PAR PRODUIT (CA, coûts, marges)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Analyse break-even + Évolution marges EBITDA</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Tableau COMPLET dettes (bancaires, CC associés, fournisseurs, sociales, fiscales)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Business Plan Excel avec hypothèses + Projections 3-5 ans</span></div>
+                
+                <h3 contenteditable="true">4. COMMERCIAL & CLIENTS</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Liste clients actifs avec CA 3 ans + Concentration Top 10</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Segmentation clients + Historique commandes</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Contrats cadres clients majeurs</span></div>
+                <div class="checkbox-item"><span class="badge badge-p2">P2</span> <span contenteditable="true">Délais paiement par segment (DSO) + Taux rétention</span></div>
+                
+                <h3 contenteditable="true">5. PRODUCTION & OPÉRATIONS</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Inventaire COMPLET équipements (liste, propriétaire, valeur, état)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Contrat mise à dispo actifs industriels par MAScIR</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Plans + Photos unité production + Bail commercial</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Capacité théorique vs Production réelle 3 ans (volumes/produit)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Taux utilisation capacité + Goulots d'étranglement</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Liste fournisseurs critiques + Contrats + Lead times</span></div>
+                
+                <h3 contenteditable="true">6. QUALITÉ & RÉGLEMENTAIRE</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Certificat ISO 13485 + Rapports audits (3 derniers)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Manuel Qualité + Registre non-conformités + CAPA</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Certificats enregistrement DMP (6 kits) + Autorisation exploitation</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Rapports inspections DMP (3 ans) + Certificats marquage CE</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Rapports validation clinique par produit + Résultats études</span></div>
+                
+                <h3 contenteditable="true">7. RESSOURCES HUMAINES</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Organigramme + Liste nominative employés (fonction, ancienneté, salaire)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Situation Chercheurs : employeur actuel, % temps, contrats</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Masse salariale 3 ans + Litiges prud'homaux</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Attestation CNSS à jour + Clauses non-concurrence</span></div>
+                
+                <h3 contenteditable="true">8. R&D & PIPELINE</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Liste exhaustive projets R&D (13 kits) + État avancement (% completion)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Budget consommé vs total par projet + Timeline validation/autorisation</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Ressources humaines assignées + Risques techniques</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Convention cadre MAScIR pour R&D</span></div>
+                
+                <h3 contenteditable="true">9. DILIGENCES SPÉCIFIQUES</h3>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Rapport audit financier (Big 4 ou cabinet reconnu)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Rapport audit juridique complet</span></div>
+                <div class="checkbox-item"><span class="badge badge-p1">P1</span> <span contenteditable="true">Rapport audit IP (cabinet spécialisé)</span></div>
+                <div class="checkbox-item"><span class="badge badge-p2">P2</span> <span contenteditable="true">Valorisation indépendante + Étude marché actualisée</span></div>
+            </section>
+            
+            <!-- CONCLUSION -->
+            <section>
+                <h2 contenteditable="true">📌 CONCLUSION</h2>
+                
+                <div class="success-box">
+                    <h3 contenteditable="true">✅ SYNTHÈSE FINALE</h3>
+                    <p style="font-size: 1.2em; font-weight: bold; color: #2a5298; text-align: center; padding: 20px; background: white; border-radius: 10px; margin: 20px 0;" contenteditable="true">
+                        GO CONDITIONNEL<br>
+                        <span style="font-size: 0.8em; font-weight: normal;">Poursuivre l'acquisition SI ET SEULEMENT SI les 6 conditions impératives sont satisfaites</span>
+                    </p>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3 contenteditable="true">🎯 PROCHAINES ÉTAPES</h3>
+                    <ol>
+                        <li contenteditable="true"><strong>Semaine 1-2 :</strong> Demande Data-Room complète (priorité P1)</li>
+                        <li contenteditable="true"><strong>Mois 1 :</strong> Audits financier, juridique, IP</li>
+                        <li contenteditable="true"><strong>Mois 1-2 :</strong> Négociation Chercheurs (packages rétention)</li>
+                        <li contenteditable="true"><strong>Mois 2-3 :</strong> Renégociation structure transaction et prix</li>
+                        <li contenteditable="true"><strong>Mois 3-6 :</strong> Levée conditions suspensives</li>
+                        <li contenteditable="true"><strong>Mois 6 :</strong> Closing</li>
+                    </ol>
+                    <p style="margin-top: 15px; text-align: center; font-weight: bold;" contenteditable="true">Budget DD : 200-300K MAD | Durée : 6-9 mois</p>
+                </div>
+            </section>
+            
+        </div>
+        
+        <footer>
+            <p contenteditable="true"><strong>🔒 RAPPORT D'ACQUISITION MOLDIAG SA 🔒</strong></p>
+            <p contenteditable="true"><strong>Document Strictement Confidentiel</strong></p>
+            <p contenteditable="true">Analyse M&A Due Diligence Acquéreur | Novembre 2025</p>
+        </footer>
+    </div>
+    
+    <script>
+        // ==================== VARIABLES GLOBALES ====================
+        const STORAGE_KEY = 'moldiag_rapport_editable_v1';
+        const ORIGINAL_CONTENT_KEY = 'moldiag_rapport_original_v1';
+        const AUTO_SAVE_INTERVAL = 120000; // 2 minutes
+        let hasUnsavedChanges = false;
+        let autoSaveTimer = null;
+        
+        // ==================== SAUVEGARDE DU CONTENU ORIGINAL ====================
+        function saveOriginalContent() {
+            if (!localStorage.getItem(ORIGINAL_CONTENT_KEY)) {
+                const originalContent = document.getElementById('editableContent').innerHTML;
+                try {
+                    localStorage.setItem(ORIGINAL_CONTENT_KEY, originalContent);
+                    console.log('✅ Contenu original sauvegardé');
+                } catch (e) {
+                    console.error('❌ Erreur sauvegarde contenu original:', e);
+                }
+            }
+        }
+        
+        // ==================== CHARGEMENT VERSION SAUVEGARDÉE ====================
+        function loadSavedVersion() {
+            try {
+                const savedContent = localStorage.getItem(STORAGE_KEY);
+                if (savedContent) {
+                    document.getElementById('editableContent').innerHTML = savedContent;
+                    
+                    const savedDate = localStorage.getItem(STORAGE_KEY + '_date');
+                    if (savedDate) {
+                        updateVersionBadge('Version sauvegardée: ' + new Date(savedDate).toLocaleString('fr-FR'));
+                    }
+                    
+                    showNotification('✅ Version sauvegardée chargée avec succès', 'success');
+                    console.log('✅ Version sauvegardée chargée');
+                    return true;
+                }
+            } catch (e) {
+                console.error('❌ Erreur chargement version sauvegardée:', e);
+                showNotification('⚠️ Erreur lors du chargement de la version sauvegardée', 'error');
+            }
+            return false;
+        }
+        
+        // ==================== SAUVEGARDE VERSION ACTUELLE ====================
+        function saveCurrentVersion() {
+            try {
+                const content = document.getElementById('editableContent').innerHTML;
+                
+                // Validation contenu non vide
+                if (!content || content.trim().length < 100) {
+                    showNotification('⚠️ Contenu trop court pour être sauvegardé', 'error');
+                    return false;
+                }
+                
+                // Sauvegarde dans localStorage
+                localStorage.setItem(STORAGE_KEY, content);
+                localStorage.setItem(STORAGE_KEY + '_date', new Date().toISOString());
+                
+                // Mise à jour UI
+                hasUnsavedChanges = false;
+                updateEditStatus(false);
+                updateVersionBadge('Version sauvegardée: ' + new Date().toLocaleString('fr-FR'));
+                showNotification('💾 Modifications sauvegardées avec succès !', 'success');
+                
+                console.log('✅ Version sauvegardée avec succès');
+                return true;
+                
+            } catch (e) {
+                console.error('❌ Erreur sauvegarde:', e);
+                
+                // Gestion localStorage plein
+                if (e.name === 'QuotaExceededError') {
+                    showNotification('❌ Espace de stockage insuffisant. Veuillez télécharger votre version.', 'error');
+                } else {
+                    showNotification('❌ Erreur lors de la sauvegarde', 'error');
+                }
+                return false;
+            }
+        }
+        
+        // ==================== RESTAURATION VERSION ORIGINALE ====================
+        function restoreOriginalVersion() {
+            try {
+                const originalContent = localStorage.getItem(ORIGINAL_CONTENT_KEY);
+                if (originalContent) {
+                    document.getElementById('editableContent').innerHTML = originalContent;
+                    
+                    // Suppression version sauvegardée
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(STORAGE_KEY + '_date');
+                    
+                    hasUnsavedChanges = false;
+                    updateEditStatus(false);
+                    updateVersionBadge('📝 Version originale');
+                    showNotification('🔄 Version originale restaurée avec succès !', 'success');
+                    
+                    closeModal();
+                    console.log('✅ Version originale restaurée');
+                    
+                    // Réinitialiser les zones éditables
+                    makeContentEditable();
+                } else {
+                    showNotification('❌ Version originale introuvable', 'error');
+                }
+            } catch (e) {
+                console.error('❌ Erreur restauration:', e);
+                showNotification('❌ Erreur lors de la restauration', 'error');
+            }
+        }
+        
+        // ==================== TÉLÉCHARGEMENT HTML ====================
+        function downloadAsHTML() {
+            try {
+                // Récupération du HTML complet avec les modifications
+                const htmlContent = document.documentElement.outerHTML;
+                
+                // Création blob
+                const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+                
+                // Création lien téléchargement
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'MOLDIAG_Rapport_Edite_' + new Date().toISOString().split('T')[0] + '.html';
+                
+                // Déclenchement téléchargement
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('📥 Fichier HTML téléchargé avec succès !', 'success');
+                console.log('✅ HTML téléchargé');
+                
+            } catch (e) {
+                console.error('❌ Erreur téléchargement:', e);
+                showNotification('❌ Erreur lors du téléchargement', 'error');
+            }
+        }
+        
+        // ==================== DÉTECTION MODIFICATIONS ====================
+        function trackChanges() {
+            hasUnsavedChanges = true;
+            updateEditStatus(true);
+            
+            // Reset auto-save timer
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(autoSave, AUTO_SAVE_INTERVAL);
+        }
+        
+        // ==================== AUTO-SAUVEGARDE ====================
+        function autoSave() {
+            if (hasUnsavedChanges) {
+                saveCurrentVersion();
+                console.log('🔄 Auto-sauvegarde effectuée');
+            }
+        }
+        
+        // ==================== MISE À JOUR STATUT ÉDITION ====================
+        function updateEditStatus(unsaved) {
+            const statusElement = document.getElementById('editStatus');
+            if (unsaved) {
+                statusElement.textContent = '⚠️ Modifications non sauvegardées';
+                statusElement.classList.add('unsaved');
+            } else {
+                statusElement.textContent = '✅ Tout sauvegardé';
+                statusElement.classList.remove('unsaved');
+            }
+        }
+        
+        // ==================== MISE À JOUR BADGE VERSION ====================
+        function updateVersionBadge(text) {
+            document.getElementById('versionBadge').textContent = text;
+        }
+        
+        // ==================== NOTIFICATION ====================
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('saveNotification');
+            notification.textContent = message;
+            notification.className = 'save-notification show';
+            
+            if (type === 'error') {
+                notification.classList.add('error');
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // ==================== MODAL CONFIRMATION ====================
+        function showRestoreModal() {
+            document.getElementById('confirmModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+        
+        function confirmRestore() {
+            restoreOriginalVersion();
+        }
+        
+        // ==================== RENDRE CONTENU ÉDITABLE ====================
+        function makeContentEditable() {
+            // Rendre tous les éléments de contenu éditables
+            const editableElements = document.querySelectorAll('#editableContent [contenteditable="true"]');
+            
+            editableElements.forEach(element => {
+                element.addEventListener('input', trackChanges);
+                element.addEventListener('paste', (e) => {
+                    // Nettoyage du texte collé (retrait formatage)
+                    e.preventDefault();
+                    const text = (e.clipboardData || window.clipboardData).getData('text');
+                    document.execCommand('insertText', false, text);
+                });
+            });
+            
+            console.log(`✅ ${editableElements.length} éléments rendus éditables`);
+        }
+        
+        // ==================== NAVIGATION SMOOTH ====================
+        function setupSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        }
+        
+        // ==================== HIGHLIGHT NAVIGATION ====================
+        function setupNavHighlight() {
+            window.addEventListener('scroll', () => {
+                const sections = document.querySelectorAll('section');
+                const navLinks = document.querySelectorAll('nav a');
+                let current = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 200) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.style.backgroundColor = '';
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.style.backgroundColor = '#1e3c72';
+                    }
+                });
+            });
+        }
+        
+        // ==================== PRÉVENIR PERTE MODIFICATIONS ====================
+        window.addEventListener('beforeunload', (e) => {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = 'Vous avez des modifications non sauvegardées. Voulez-vous vraiment quitter ?';
+            }
+        });
+        
+        // ==================== RACCOURCIS CLAVIER ====================
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+S ou Cmd+S pour sauvegarder
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveCurrentVersion();
+            }
+            
+            // Ctrl+P ou Cmd+P pour imprimer
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+        
+        // ==================== INITIALISATION AU CHARGEMENT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Initialisation application éditable MOLDIAG...');
+            
+            // 1. Sauvegarder contenu original
+            saveOriginalContent();
+            
+            // 2. Charger version sauvegardée si existe
+            const hasLoadedSaved = loadSavedVersion();
+            if (!hasLoadedSaved) {
+                updateVersionBadge('📝 Version originale');
+            }
+            
+            // 3. Rendre contenu éditable
+            makeContentEditable();
+            
+            // 4. Setup navigation
+            setupSmoothScroll();
+            setupNavHighlight();
+            
+            // 5. Setup auto-save
+            autoSaveTimer = setTimeout(autoSave, AUTO_SAVE_INTERVAL);
+            
+            console.log('✅ Application prête !');
+            console.log('💡 Utilisez Ctrl+S pour sauvegarder rapidement');
+        });
+        
+        // ==================== GESTION ERREURS GLOBALES ====================
+        window.addEventListener('error', (e) => {
+            console.error('❌ Erreur globale:', e.error);
+            showNotification('❌ Une erreur est survenue', 'error');
+        });
+        
+    </script>
+</body>
+</html>
